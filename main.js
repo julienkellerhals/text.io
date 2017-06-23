@@ -42,11 +42,11 @@ const createPyProc = () => {
   if (guessPackaged()) {
     pyProc = require('child_process').execFile(script, [port])
   } else {
-    pyProc = require('child_process').spawn('python', [script, port])
+    pyProc = require('child_process').spawn('python3', [script, port])
   }
- 
+
   if (pyProc != null) {
-    //console.log(pyProc)
+    console.log(script)
     console.log('child process success on port ' + port)
   }
 }
