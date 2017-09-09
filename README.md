@@ -2,7 +2,7 @@
 
 :tada:
 
+install with
 ```
-python3 pycalc/api.py
+npm install --runtime=electron --target=1.7.6 --disturl=https://atom.io/download/atom-shell --abi=54
 ```
-muss momentan noch ausgeführt werden damit es funktioniert.
