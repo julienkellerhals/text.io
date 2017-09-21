@@ -29,7 +29,7 @@ $(document).ready(function(){
       )
       context.stroke()
     }
-    console.log("mONGO move")
+    console.log("Mausbewegung festgestellt")
   }
 
   canvas.onmouseup = function() {
@@ -59,20 +59,14 @@ $(document).ready(function(){
 
   var panelIndex = 0;
 
-  $("#left").click(function() {
-    if (panelIndex == 0) {
-      panelIndex = 1;
-    } else {
-      panelIndex = 0;
-    }
-    switchPanel();
-  });
 
-  $("#right").click(function() {
+  $("#switchBtn").click(function() {
     if (panelIndex == 1) {
       panelIndex = 0;
+      $("#switchBtn").text("history")
     } else {
       panelIndex = 1;
+      $("#switchBtn").text("main")
     }
     switchPanel();
   });
@@ -86,28 +80,21 @@ $(document).ready(function(){
       $(".historyPanel").css("display", "block");
     }
   }
-  /*
-  $("#right").click(function() {
-    if ($(".mainPanel").css("display", "block")) {
-      $(".mainPanel").toggle("slide");
-      $(".historyPanel").css("display", "block");
-    } else {
-      $(".mainPanel").css("display", "block");
-      $(".historyPanel").css("display", "none");
-    }
-  });*/
+  
 
-  /*main page*/
+  /* ----- MAIN PAGE ----- */
 
   $("#done").click(function() {
-    var possible = "abcdefghijklmnopqrstuvwxyz";
+    var possible = "A";
     var randomText = possible.charAt(Math.floor(Math.random() * possible.length));
     var element = $("<div></div>").text(randomText).hide();
     $(".elementList").append(element);
     element.fadeIn();
+    $("#done").css("background-color", "black");
 
-    $("#done").css("background-color", "gray");
-    //$("#done").delay(10000000).css("background-color", "lightgray");
+    $("#done").delay(1000).css("background-color", "lightgray");
+
+    //$("#done").delay(10000000).css("background-color", "lightgray"); 
 
     context.clearRect(0, 0, canvas.width, canvas.height);
   });
