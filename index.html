@@ -4,15 +4,52 @@
     <link rel="stylesheet" href="css/style.css">
     <meta charset="UTF-8">
     <title>text.io</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
   </head>
   <body>
-    <h1 id="clear">Hi</h1>
-    <canvas id="paintCanvas"></canvas>
+    <div class="main">
+      <h1>text.io</h1>
+      <div class="canvasContainer">
+        <canvas id="paintCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="switch">
+        <button type="button" name="button" class="topBtn" id="left">left</button>
+        <button type="button" name="button" class="topBtn" id="right">right</button>
+      </div>
+      <div class="mainPanel">
+        <h1>main</h1>
+        <div class="elementList">
+          <!--
+          <a href="#">element</a>
+          <a href="#">element</a>
+          <a href="#">element</a>
+          <a href="#">element</a>
+          <a href="#">element</a>-->
+        </div>
+        <div class="optionList">
+          <button type="button" name="button" id="clear">Clear</button>
+          <button type="button" name="button" id="done">Done writing</button>
+          <button type="button" name="button" id="create">create word</button>
+        </div>
+      </div>
+
+      <div class="historyPanel">
+        <h1>history</h1>
+        <div class="historyList">
+
+        </div>
+      </div>
+    </div>
+    <!--
     <textarea id="output">Ganvas</textarea>
-    <button id="battn">Mongo4</button>
+    <button id="battn">Mongo4</button>-->
   </body>
 
   <script>
+    //require('./jquery-3.2.1.min.js')
     require('./js/paint.js')
   </script>
 </html>
