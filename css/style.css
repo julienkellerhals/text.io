@@ -1,5 +1,6 @@
+/*
 body {
-	background-color: lightgrey; 
+	background-color: lightgrey;
 }
 
 #battn {
@@ -14,14 +15,106 @@ body {
 }
 
 #battn:hover  {
-	background-color: lightgrey; 
+	background-color: lightgrey;
 }
 
 #paintCanvas {
 	background-color: white;3
 }
+*/
 
+body {
+	display: flex;
+	height: 100vh;
+	width: 100vw;
+	margin: 0 auto;
 
+	overflow: hidden;
+}
 
+.main {
+	flex-grow: 4;
+	background-color: white;
+}
 
+.canvasContainer {
+	height: 100%;
+	width: 100%;
+}
 
+.panel {
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+	background-color: lightgray;
+}
+
+.switch {
+	display: flex;
+	flex-direction: row;
+}
+
+.topBtn {
+	flex-grow: 1;
+	border: none;
+	background-color: gray;
+}
+
+/*main panel */
+
+.mainPanel {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.elementList {
+	display: flex;
+	flex-direction: column-reverse;
+	height: 50%;
+	width: 100%;
+
+	overflow-y: auto;
+}
+
+.elementList div {
+	flex-grow: 1;
+	width: 100%;
+	height: 10%;
+	margin: 1vh 0;
+
+	background-color: gray;
+	transition: all 1s;
+}
+
+.elementList div:hover {
+	flex-grow: 4;
+	width: 100%;
+	height: 10%;
+	margin: 1vh 0;
+
+	background-color: gray;
+}
+
+.optionList {
+	width: 100%;
+	display: flex;
+}
+
+.optionList button {
+	flex-grow: 1;
+	background-color: lightgray;
+	border: none;
+	transition: all 1s;
+}
+
+/*history panel*/
+
+.historyPanel {
+	display: none;
+}
+
+#paintCanvas {
+	background-color: white;
+	border: solid black 2px;
+}
