@@ -5,3 +5,6 @@ msgpack-python
 gevent
 pyinstaller
 pypiwin32
+numpy
+random
+pickle

@@ -11,7 +11,7 @@ $(document).ready(function(){
 
   context.strokeStyle = "black"
   context.lineCap = "round"
-  context.lineWidth = 5
+  context.lineWidth = 1 //5
 
   canvas.onmousedown = function(e) {
     isDrawing = true
@@ -96,7 +96,7 @@ $(document).ready(function(){
 
     //$("#done").delay(10000000).css("background-color", "lightgray"); 
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    //context.clearRect(0, 0, canvas.width, canvas.height);
   });
 
   $("#create").click(function() {
@@ -170,6 +170,33 @@ client.invoke("echo", "server ready", (error, res) => {
   }
 })
 
+$("#done").click(function() {
+  var canvas = document.getElementById("paintCanvas")
+  var context = canvas.getContext('2d')
+  var imgData = context.getImageData(0,0,canvas.width,canvas.height)
+  var data = imgData.data
+  var imgArray = []
+
+  //TODO 
+  for(var i=0; i<data.length; i+=4){
+    /*console.log(data[i])
+    console.log(data[i+1])
+    console.log(data[i+2])
+    console.log(data[1+3])*/
+    var total = data[i] + data[i+1] + data[1+2] + data[i+3]
+    imgArray[i] = total
+  }
+  
+  client.invoke("init_network", (res) => {
+    //console.log(res)
+  })
+  client.invoke("load_network", "../data/net.p", (res) => {
+    console.log(res)
+  })
+  client.invoke("predict", imgArray, (res) => {
+    console.log(res)
+  })
+})
 
 /*document.getElementById("battn").onclick = function() {
   /*var img = new Image()
