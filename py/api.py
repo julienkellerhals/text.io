@@ -16,6 +16,7 @@ class Api(object):
 
     def echo(self, text):
         """echo any text"""
+        self.network = None
         return text
 
     def init_network(self):
@@ -55,7 +56,7 @@ class Api(object):
         if (self.net == None):
             return("Initialize the network first")
         else:
-            return(np.argmax(self.net.predict(x)))
+            return(self.net.predict(x))
 
 def parse_port():
     port = 4242

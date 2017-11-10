@@ -17,17 +17,19 @@ class Network(object):
 
     def save(self, path="../../data/net.p"):
         #save the network as a array to a file
-        net = [self.num_layers, self.sizes, self.weights, self.biases]
-        pickle.dump(net, open(path, "wb"))
+        net = np.array([[self.num_layers], [self.sizes], [self.weights], [self.biases]], dtype=object)
+        net.dump(path)
+        #pickle.dump(net, open(path, "wb"))
         print("saved shit yo")
 
     def load(self, path="../../data/net.p"):
         #load the network from path
-        net = pickle.load(open(path, "rb"))
-        self.num_layers = net[0]
-        self.sizes = net[1]
-        self.weights = net[2]
-        self.biases = net[3]
+        net = np.load(path)
+        #net = pickle.load(open(path, "rb"))
+        self.num_layers = net[0][0]
+        self.sizes = net[1][0]
+        self.weights = net[2][0]
+        self.biases = net[3][0]
         #print("loaded shit yo")
         #print("num_layers: ")
         print(self.num_layers)

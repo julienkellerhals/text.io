@@ -177,7 +177,6 @@ $("#done").click(function() {
   var data = imgData.data
   var imgArray = []
 
-  //TODO
   for(var i=0; i<data.length; i+=4){
     /*console.log(data[i])
     console.log(data[i+1])
@@ -189,13 +188,16 @@ $("#done").click(function() {
 
   console.log(imgArray.length)
 
-  client.invoke("init_network", (res) => {
+  client.invoke("init_network", (error, res) => {
+    console.log(error)
     console.log(res)
   })
-  client.invoke("load_network", "data/net.p", (res) => {
+  client.invoke("load_network", "data/net.p", (error, res) => {
+    console.log(error)
     console.log(res)
   })
-  client.invoke("predict", imgArray, (res) => {
+  client.invoke("predict", imgArray, (error, res) => {
+    console.log(error)
     console.log(res)
   })
 })
