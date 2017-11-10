@@ -38,9 +38,15 @@ class Network(object):
     def predict(self, x):
         #return output a from input x
 
+        #pickle.dump(x, open("yo.p", "wb"))
+        #TODO: CHANGE THIS TO LENGHT OF FIRST LAYER
+        #turn x into a numpy array that we can use without getting grabage as result
+        x = np.array(x, dtype=float)
+        x.shape = (784, 1)
+        #x = pickle.load(open("py/src/oy.p", "rb"))
         for w, b in zip(self.weights, self.biases):
             x = sigmoid(np.dot(w, x) + b)
-        return x
+        return (x)
 
     def train(self, data, epochs, num_batches, learning_rate, test_data=None):
         #data is a tuple (input, output)

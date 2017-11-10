@@ -186,7 +186,7 @@ $("#done").click(function() {
     imgArray[i/4] = total
   }
 
-  console.log(imgArray.length)
+  console.log(imgArray)
 
   client.invoke("init_network", (error, res) => {
     console.log(error)

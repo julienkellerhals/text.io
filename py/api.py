@@ -56,7 +56,10 @@ class Api(object):
         if (self.net == None):
             return("Initialize the network first")
         else:
-            return(self.net.predict(x))
+            x = self.net.predict(x)
+            res = np.argmax(x)
+            #we can't return a numpy class so we need .item()
+            return(res.item())
 
 def parse_port():
     port = 4242
