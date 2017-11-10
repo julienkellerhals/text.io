@@ -4,6 +4,7 @@ from src import network
 from src import my_mnist_loader
 import sys
 import zerorpc
+import numpy as np
 
 class Api(object):
     def calc(self, text):
@@ -26,7 +27,7 @@ class Api(object):
         """load network from path"""
         if (self.net == None):
             return("Initialize the network first")
-        else: 
+        else:
             if (path == None):
                 return(self.net.load())
             else:
@@ -36,7 +37,7 @@ class Api(object):
         """save network to path"""
         if (self.net == None):
             return("Initialize the network first")
-        else: 
+        else:
             if (path == None):
                 return(self.net.save())
             else:
@@ -54,7 +55,7 @@ class Api(object):
         if (self.net == None):
             return("Initialize the network first")
         else:
-            return(self.net.predict(x))
+            return(np.argmax(self.net.predict(x)))
 
 def parse_port():
     port = 4242

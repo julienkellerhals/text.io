@@ -80,7 +80,7 @@ $(document).ready(function(){
       $(".historyPanel").css("display", "block");
     }
   }
-  
+
 
   /* ----- MAIN PAGE ----- */
 
@@ -94,7 +94,7 @@ $(document).ready(function(){
 
     $("#done").delay(1000).css("background-color", "lightgray");
 
-    //$("#done").delay(10000000).css("background-color", "lightgray"); 
+    //$("#done").delay(10000000).css("background-color", "lightgray");
 
     //context.clearRect(0, 0, canvas.width, canvas.height);
   });
@@ -177,20 +177,22 @@ $("#done").click(function() {
   var data = imgData.data
   var imgArray = []
 
-  //TODO 
+  //TODO
   for(var i=0; i<data.length; i+=4){
     /*console.log(data[i])
     console.log(data[i+1])
     console.log(data[i+2])
     console.log(data[1+3])*/
-    var total = data[i] + data[i+1] + data[1+2] + data[i+3]
-    imgArray[i] = total
+    var total = data[i] + data[i+1] + data[i+2] + data[i+3]
+    imgArray[i/4] = total
   }
-  
+
+  console.log(imgArray.length)
+
   client.invoke("init_network", (res) => {
-    //console.log(res)
+    console.log(res)
   })
-  client.invoke("load_network", "../data/net.p", (res) => {
+  client.invoke("load_network", "data/net.p", (res) => {
     console.log(res)
   })
   client.invoke("predict", imgArray, (res) => {

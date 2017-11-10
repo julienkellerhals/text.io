@@ -28,9 +28,10 @@ class Network(object):
         self.sizes = net[1]
         self.weights = net[2]
         self.biases = net[3]
-        print("loaded shit yo")
-        print("num_layers: ")
+        #print("loaded shit yo")
+        #print("num_layers: ")
         print(self.num_layers)
+        return("loaded network")
 
     def predict(self, x):
         #return output a from input x
@@ -60,11 +61,11 @@ class Network(object):
 
                 self.update_mini_batch(batch, learning_rate)
                 #self.weights = [self.weights[y] + learning_rate * loss for y in self.sizes[1:]]
-            
+
             #print progress
             if test_data:
                 print("Epoch {0}: {1} / {2}".format(j, self.evaluate(test_data), len(test_data)))
-            else: 
+            else:
                 print("Epoch {0} complete".format(j))
 
     def evaluate(self, test_data):
