@@ -5,15 +5,93 @@ import pickle
 #seed our random numbers
 np.random.seed(420)
 
+class Layer(object):
+    """docstring for Layer."""
+    def __init__(self, type, size, kernel_size=None, prev_layer=None):
+        self.types = {'norm': 0, 'in': 1, 'conv': 2}
+        if (type == "norm"):
+            #normal layer with weights and biases
+            self.type = self.types['norm']
+            self.initNorm(size)
+        elif (type == "in"):
+            #input layer
+            self.type = self.types['in']
+            self.initIn(size)
+        elif (type == "conv"):
+            #convolutional layer
+            self.type = self.types['conv']
+            self.initConv(size, kernel_size, prev_layer)
+        else:
+            raise ValueError("ohno i don't understand this type of layer: {}".format(type))
+
+    def initNorm(self, size):
+        #init the weights randomly
+        self.weights = [np.random.randn(0, 1) for _ in range(size)]
+        self.biases  = [np.random.randn(0, 1) for _ in range(size)]
+
+    def initIn(self, size):
+        #no biases
+        self.weights = [np.random.randn(0, 1) for _ in range(size)]
+
+    def initConv(self, size, kernel_size, prev_layer):
+        #TODO: all the biases and weights are supposed to be shared?
+        self.weights = [np.random.randn(0, 1) for _ in range(size)]
+        self.biases  = [np.random.randn(0, 1) for _ in range(size)]
+        #TODO: different kenreleleleszszs
+        self.kernel  = self.build_kernel(kernel_size)
+
+        self.prev_layer = prev_layer
+        length = len(kernel)
+        res = np.zeros((int(len(layer)/length), int(len(layer)/length)))
+        for x in range(0, len(layer), length):
+            for y in range(0, len(layer), length):
+                #go trough the layer with a step size of kernel length
+                mini_kernel = 0
+                for i in range(length):
+                    for j in range(length):
+                        #multiply each number of the kernel with each part of the layer
+                        mini_kernel += layer[i][j] * kernel[i][j]
+                res[int(x/length)][int(y/length)] = mini_kernel
+
+    def build_kernel(self, size):
+        """build a kernel"""
+        #make empty array
+        x = np.zeros((size, size))
+        #change middle of array
+        x[int(size/2)][int(size/2)] = 1
+        return x
+
 class Network(object):
     """docstring for Network."""
     def __init__(self, sizes):
         self.num_layers = len(sizes)
         self.sizes = sizes
+        #self.initSizes(sizes)
 
         #initialize weights & biases randomly
         self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+
+    #def initSizes(self, sizes):
+        #for s in sizes:
+            #nah
+
+    def conv(self, layer_n, kernel):
+        """convolute nth layer with kernel"""
+        layer = self.weights[layer_n]
+        length = len(kernel)
+        res = np.zeros((int(len(layer)/length), int(len(layer)/length)))
+        for x in range(0, len(layer), length):
+            for y in range(0, len(layer), length):
+                #go trough the layer with a step size of kernel length
+                mini_kernel = 0
+                for i in range(length):
+                    for j in range(length):
+                        #multiply each number of the kernel with each part of the layer
+                        mini_kernel += layer[i][j] * kernel[i][j]
+                res[int(x/length)][int(y/length)] = mini_kernel
+
+        return res
 
     def save(self, path="../../data/net.p"):
         #save the network as a array to a file
@@ -39,10 +117,6 @@ class Network(object):
         #return output a from input x
 
         #pickle.dump(x, open("yo.p", "wb"))
-        #TODO: CHANGE THIS TO LENGHT OF FIRST LAYER
-        #turn x into a numpy array that we can use without getting grabage as result
-        x = np.array(x, dtype=float)
-        x.shape = (784, 1)
         #x = pickle.load(open("py/src/oy.p", "rb"))
         for w, b in zip(self.weights, self.biases):
             x = sigmoid(np.dot(w, x) + b)
@@ -83,7 +157,6 @@ class Network(object):
 
 
     def update_mini_batch(self, batch, learning_rate):
-        #TODO understand wtf you're doing
         del_w = [np.zeros(w.shape) for w in self.weights]
         del_b = [np.zeros(b.shape) for b in self.biases]
 
