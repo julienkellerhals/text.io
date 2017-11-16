@@ -49,25 +49,25 @@ class Layer(object):
 
         self.prev_layer = prev_layer
         length = len(self.kernel)
-        feature_map = np.zeros(length, length)
-        print(len(feature_map))
-        stride = 1
-        for x in range(0, len(prev_layer), stride):
-            for y in range(0, len(prev_layer), stride):
+        feature_map = np.zeros((length, length))
+        for x in range(len(prev_layer)-length + 1):
+            for y in range(len(prev_layer)-length + 1):
                 # go trough the layer with a step size of kernel length
                 # print("x: {}, y: {}".format(x, y))
                 mini_kernel = 0
                 for i in range(length):
                     for j in range(length):
                         if not (x+i >= len(prev_layer) or y+j >= len(prev_layer)):
+                            #print("x: {} y: {}".format(x+i, y+j))
                             # print("x+i: {}, y+j: {}".format(x+i, y+j))
                             # multiply each number of the kernel with each part of layer
                             mini_kernel += prev_layer[x+i][y+j] * self.kernel[i][j]
 
                 # rectify
                 mini_kernel = relu(mini_kernel)
-                feature_map[int(x/length)][int(y/stride)] = mini_kernel
+                feature_map[x][y] = mini_kernel
 
+        self.feature_map = feature_map
         return feature_map
 
     def initPool(self, size, pool_size, prev_layer):
@@ -94,6 +94,10 @@ class Layer(object):
         x = np.zeros((size, size))
         # change middle of array
         x[int(size/2)][int(size/2)] = 1
+        x[0][0] = 1
+        x[0][size-1] = 1
+        x[size-1][0] = 1
+        x[size-1][size-1] = 1
 
         return x
 
