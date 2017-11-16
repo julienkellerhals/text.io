@@ -75,8 +75,8 @@ class Layer(object):
 
         feature_map = np.zeros(int(len(prev_layer)/pool_size), int(len(prev_layer)/pool_size))
         stride = pool_size
-        for x in range(0, len(prev_layer), stride):
-            for y in range(0, len(prev_layer), stride):
+        for x in range(0, len(prev_layer)-pool_size+1, stride):
+            for y in range(0, len(prev_layer)-pool_size+1, stride):
                 # go through the previous layer and take the max in the window
                 res = 0
                 nums = []
