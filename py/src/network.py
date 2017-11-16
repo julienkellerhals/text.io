@@ -5,60 +5,96 @@ import pickle
 #seed our random numbers
 np.random.seed(420)
 
+
 class Layer(object):
     """docstring for Layer."""
+
     def __init__(self, type, size, kernel_size=None, prev_layer=None):
-        self.types = {'norm': 0, 'in': 1, 'conv': 2}
+        self.types = {'norm': 0, 'in': 1, 'conv': 2, 'pool': 3}
         if (type == "norm"):
-            #normal layer with weights and biases
+            # normal layer with weights and biases
             self.type = self.types['norm']
             self.initNorm(size)
         elif (type == "in"):
-            #input layer
+            # input layer
             self.type = self.types['in']
             self.initIn(size)
         elif (type == "conv"):
-            #convolutional layer
+            # convolutional layer
             self.type = self.types['conv']
             self.initConv(size, kernel_size, prev_layer)
+        elif (type == "pool"):
+            # pooling layer
+            self.type = self.types['pool']
+            self.initPool()
         else:
             raise ValueError("ohno i don't understand this type of layer: {}".format(type))
 
     def initNorm(self, size):
-        #init the weights randomly
+        # init the weights randomly
         self.weights = [np.random.randn(0, 1) for _ in range(size)]
         self.biases  = [np.random.randn(0, 1) for _ in range(size)]
 
     def initIn(self, size):
-        #no biases
+        # no biases
         self.weights = [np.random.randn(0, 1) for _ in range(size)]
 
     def initConv(self, size, kernel_size, prev_layer):
-        #TODO: all the biases and weights are supposed to be shared?
+        # TODO: why kernel_size ?? just size should be enough
+        # TODO: all the biases and weights are supposed to be shared?
         self.weights = [np.random.randn(0, 1) for _ in range(size)]
         self.biases  = [np.random.randn(0, 1) for _ in range(size)]
-        #TODO: different kenreleleleszszs
+        # TODO: different kenreleleleszszs
         self.kernel  = self.build_kernel(kernel_size)
 
         self.prev_layer = prev_layer
-        length = len(kernel)
-        res = np.zeros((int(len(layer)/length), int(len(layer)/length)))
-        for x in range(0, len(layer), length):
-            for y in range(0, len(layer), length):
-                #go trough the layer with a step size of kernel length
+        length = len(self.kernel)
+        feature_map = np.zeros(length, length)
+        print(len(feature_map))
+        stride = 1
+        for x in range(0, len(prev_layer), stride):
+            for y in range(0, len(prev_layer), stride):
+                # go trough the layer with a step size of kernel length
+                # print("x: {}, y: {}".format(x, y))
                 mini_kernel = 0
                 for i in range(length):
                     for j in range(length):
-                        #multiply each number of the kernel with each part of the layer
-                        mini_kernel += layer[i][j] * kernel[i][j]
-                res[int(x/length)][int(y/length)] = mini_kernel
+                        if not (x+i >= len(prev_layer) or y+j >= len(prev_layer)):
+                            # print("x+i: {}, y+j: {}".format(x+i, y+j))
+                            # multiply each number of the kernel with each part of layer
+                            mini_kernel += prev_layer[x+i][y+j] * self.kernel[i][j]
+
+                # rectify
+                mini_kernel = relu(mini_kernel)
+                feature_map[int(x/length)][int(y/stride)] = mini_kernel
+
+        return feature_map
+
+    def initPool(self, size, pool_size, prev_layer):
+        self.prev_layer = prev_layer
+
+        feature_map = np.zeros(int(len(prev_layer)/pool_size), int(len(prev_layer)/pool_size))
+        stride = pool_size
+        for x in range(0, len(prev_layer), stride):
+            for y in range(0, len(prev_layer), stride):
+                # go through the previous layer and take the max in the window
+                res = 0
+                nums = []
+                for i in range(pool_size):
+                    for j in range(pool_size):
+                        # add all the numbers to the array so we can take the maxium after
+                        nums.append(prev_layer[x+i][y+j])
+                feature_map[int(x/pool_size)][int(y/pool_size)]
+
+        return feature_map
 
     def build_kernel(self, size):
         """build a kernel"""
-        #make empty array
+        # make empty array
         x = np.zeros((size, size))
-        #change middle of array
+        # change middle of array
         x[int(size/2)][int(size/2)] = 1
+
         return x
 
 class Network(object):
@@ -66,9 +102,9 @@ class Network(object):
     def __init__(self, sizes):
         self.num_layers = len(sizes)
         self.sizes = sizes
-        #self.initSizes(sizes)
+        # self.initSizes(sizes)
 
-        #initialize weights & biases randomly
+        # initialize weights & biases randomly
         self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
 
@@ -83,33 +119,33 @@ class Network(object):
         res = np.zeros((int(len(layer)/length), int(len(layer)/length)))
         for x in range(0, len(layer), length):
             for y in range(0, len(layer), length):
-                #go trough the layer with a step size of kernel length
+                # go trough the layer with a step size of kernel length
                 mini_kernel = 0
                 for i in range(length):
                     for j in range(length):
-                        #multiply each number of the kernel with each part of the layer
+                        # multiply each number of the kernel with each part of the layer
                         mini_kernel += layer[i][j] * kernel[i][j]
                 res[int(x/length)][int(y/length)] = mini_kernel
 
         return res
 
     def save(self, path="../../data/net.p"):
-        #save the network as a array to a file
+        # save the network as a array to a file
         net = np.array([[self.num_layers], [self.sizes], [self.weights], [self.biases]], dtype=object)
         net.dump(path)
-        #pickle.dump(net, open(path, "wb"))
+        # pickle.dump(net, open(path, "wb"))
         print("saved shit yo")
 
     def load(self, path="../../data/net.p"):
-        #load the network from path
+        # load the network from path
         net = np.load(path)
-        #net = pickle.load(open(path, "rb"))
+        # net = pickle.load(open(path, "rb"))
         self.num_layers = net[0][0]
         self.sizes = net[1][0]
         self.weights = net[2][0]
         self.biases = net[3][0]
-        #print("loaded shit yo")
-        #print("num_layers: ")
+        # print("loaded shit yo")
+        # print("num_layers: ")
         print(self.num_layers)
         return("loaded network")
 
@@ -213,3 +249,7 @@ def sigmoid(p):
 
 def sigmoid_prime(p):
     return sigmoid(p)*(1-sigmoid(p))
+
+# relu function
+def relu(x):
+    return np.maximum(x, 0)
