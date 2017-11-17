@@ -26,7 +26,7 @@ class Layer(object):
         elif (type == "pool"):
             # pooling layer
             self.type = self.types['pool']
-            self.initPool()
+            self.initPool(size, prev_layer)
         else:
             raise ValueError("ohno i don't understand this type of layer: {}".format(type))
 
@@ -70,21 +70,23 @@ class Layer(object):
         self.feature_map = feature_map
         return feature_map
 
-    def initPool(self, size, pool_size, prev_layer):
+    def initPool(self, size, prev_layer):
+        # TODO stride
         self.prev_layer = prev_layer
 
-        feature_map = np.zeros(int(len(prev_layer)/pool_size), int(len(prev_layer)/pool_size))
-        stride = pool_size
-        for x in range(0, len(prev_layer)-pool_size+1, stride):
-            for y in range(0, len(prev_layer)-pool_size+1, stride):
+        feature_map = np.zeros((size, size))
+        stride = size
+        for x in range(0, len(prev_layer)-size+1, stride):
+            for y in range(0, len(prev_layer)-size+1, stride):
                 # go through the previous layer and take the max in the window
                 res = 0
                 nums = []
-                for i in range(pool_size):
-                    for j in range(pool_size):
+                for i in range(size):
+                    for j in range(size):
+                        print("{} {}".format(x, y))
                         # add all the numbers to the array so we can take the maxium after
                         nums.append(prev_layer[x+i][y+j])
-                feature_map[int(x/pool_size)][int(y/pool_size)]
+                feature_map[int(x/size)][int(y/size)] = max(nums)
 
         return feature_map
 
