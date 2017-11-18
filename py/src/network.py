@@ -1,6 +1,10 @@
 import numpy as np
 import random
 import pickle
+import os
+
+# TODO: doesn't work in same module // fix with os.getcwd()
+from layers import *
 
 #seed our random numbers
 np.random.seed(420)
@@ -9,7 +13,7 @@ np.random.seed(420)
 class Layer(object):
     """docstring for Layer."""
 
-    def __init__(self, type, size, kernel_size=None, prev_layer=None):
+    def __init__(self, type, size, prev_layer=None):
         self.types = {'norm': 0, 'in': 1, 'conv': 2, 'pool': 3}
         if (type == "norm"):
             # normal layer with weights and biases
@@ -22,7 +26,7 @@ class Layer(object):
         elif (type == "conv"):
             # convolutional layer
             self.type = self.types['conv']
-            self.initConv(size, kernel_size, prev_layer)
+            self.initConv(size, prev_layer)
         elif (type == "pool"):
             # pooling layer
             self.type = self.types['pool']
@@ -39,13 +43,12 @@ class Layer(object):
         # no biases
         self.weights = [np.random.randn(0, 1) for _ in range(size)]
 
-    def initConv(self, size, kernel_size, prev_layer):
-        # TODO: why kernel_size ?? just size should be enough
+    def initConv(self, size, prev_layer):
         # TODO: all the biases and weights are supposed to be shared?
         self.weights = [np.random.randn(0, 1) for _ in range(size)]
         self.biases  = [np.random.randn(0, 1) for _ in range(size)]
-        # TODO: different kenreleleleszszs
-        self.kernel  = self.build_kernel(kernel_size)
+        #init kernel randomly
+        self.kernel  = np.random.randint(-1, 2, (size, size))
 
         self.prev_layer = prev_layer
         length = len(self.kernel)
@@ -92,76 +95,51 @@ class Layer(object):
 
     def build_kernel(self, size):
         """build a kernel"""
-        # make empty array
-        x = np.zeros((size, size))
-        # change middle of array
-        x[int(size/2)][int(size/2)] = 1
-        x[0][0] = 1
-        x[0][size-1] = 1
-        x[size-1][0] = 1
-        x[size-1][size-1] = 1
-
-        return x
+        # make random array
+        return np.random.randint(-1, 1, (size, size))
 
 class Network(object):
     """docstring for Network."""
-    def __init__(self, sizes):
-        self.num_layers = len(sizes)
-        self.sizes = sizes
-        # self.initSizes(sizes)
+    def __init__(self):
+        self.layers = []
 
-        # initialize weights & biases randomly
-        self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+    def add(self, type, size, kernel_size=None, pool_size=None):
+        """ add layer to network"""
+        if (type == "norm"):
+            # normal layer with weights and biases
+            self.layers.append(Norm(size))
+        elif (type == "in"):
+            # input layer
+            self.layers.append(Input(size))
+        elif (type == "conv"):
+            # convolutional layer
+            self.layers.append(Conv(size, kernel_size))
+        elif (type == "pool"):
+            # pooling layer
+            self.layers.append(Pool(size, pool_size))
+        else:
+            raise ValueError("ohno i don't understand this type of layer: {}".format(type))
 
-    #def initSizes(self, sizes):
-        #for s in sizes:
-            #nah
-
-    def conv(self, layer_n, kernel):
-        """convolute nth layer with kernel"""
-        layer = self.weights[layer_n]
-        length = len(kernel)
-        res = np.zeros((int(len(layer)/length), int(len(layer)/length)))
-        for x in range(0, len(layer), length):
-            for y in range(0, len(layer), length):
-                # go trough the layer with a step size of kernel length
-                mini_kernel = 0
-                for i in range(length):
-                    for j in range(length):
-                        # multiply each number of the kernel with each part of the layer
-                        mini_kernel += layer[i][j] * kernel[i][j]
-                res[int(x/length)][int(y/length)] = mini_kernel
-
-        return res
 
     def save(self, path="../../data/net.p"):
         # save the network as a array to a file
-        net = np.array([[self.num_layers], [self.sizes], [self.weights], [self.biases]], dtype=object)
+        net = self.layers
         net.dump(path)
         # pickle.dump(net, open(path, "wb"))
         print("saved shit yo")
 
     def load(self, path="../../data/net.p"):
         # load the network from path
-        net = np.load(path)
-        # net = pickle.load(open(path, "rb"))
-        self.num_layers = net[0][0]
-        self.sizes = net[1][0]
-        self.weights = net[2][0]
-        self.biases = net[3][0]
-        # print("loaded shit yo")
-        # print("num_layers: ")
-        print(self.num_layers)
+        self.layers = np.load(path)
+
         return("loaded network")
 
     def predict(self, x):
-        #return output a from input x
+        # return output a from input x
 
-        #pickle.dump(x, open("yo.p", "wb"))
-        #x = pickle.load(open("py/src/oy.p", "rb"))
-        for w, b in zip(self.weights, self.biases):
-            x = sigmoid(np.dot(w, x) + b)
+        for l in self.layers:
+            x = l.predict(x)
+
         return (x)
 
     def train(self, data, epochs, num_batches, learning_rate, test_data=None):
@@ -199,21 +177,10 @@ class Network(object):
 
 
     def update_mini_batch(self, batch, learning_rate):
-        del_w = [np.zeros(w.shape) for w in self.weights]
-        del_b = [np.zeros(b.shape) for b in self.biases]
+        """ optimize each layer """
+        for l in self.layers:
+            l.optimize(batch, learning_rate)
 
-        for x, y in batch:
-            #find out how wrong our guess was
-            delta_del_w, delta_del_b = self.backprop(x, y)
-
-            del_w = [nw+dnw for nw, dnw in zip(del_w, delta_del_w)]
-            del_b = [nb+dnb for nb, dnb in zip(del_b, delta_del_b)]
-
-        #update weights and biases based on learning_rate and error
-        self.weights = [w-(learning_rate/len(batch))*nw
-                         for w, nw in zip(self.weights, del_w)]
-        self.biases = [b-(learning_rate/len(batch))*nb
-                         for b, nb in zip(self.biases, del_b)]
 
     def backprop(self, x, y):
         del_w = [np.zeros(w.shape) for w in self.weights]

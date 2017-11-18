@@ -2,6 +2,7 @@ from __future__ import print_function
 from calc import calc as real_calc
 from src import network
 from src import my_mnist_loader
+from src.layers import *
 import sys
 import zerorpc
 import numpy as np
@@ -21,7 +22,14 @@ class Api(object):
 
     def init_network(self):
         """init a empy network with set sizes"""
-        self.net = network.Network([784, 30, 10])
+        self.net = network.Network()
+        self.net.add("in", 784)
+        self.net.add("conv", 372, kernel_size=7)
+        self.net.add("pool", 186, pool_size=7)
+        self.net.add("conv", 186, kernel_size=5)
+        self.net.add("pool", 93, pool_size=5)
+        self.net.add("norm", 40)
+        self.net.add("norm", 10) # output layer
         return("made a network yo")
 
     def load_network(self, path=None):
