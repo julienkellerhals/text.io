@@ -26,7 +26,7 @@ class Network(object):
         #load the network from path
         net = np.load(path)
         #net = pickle.load(open(path, "rb"))
-        self.num_layers = net[0][0]
+        self.num_layers = net[0]
         self.sizes = net[1][0]
         self.weights = net[2][0]
         self.biases = net[3][0]
