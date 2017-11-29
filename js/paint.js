@@ -11,7 +11,7 @@ $(document).ready(function(){
 
   context.strokeStyle = "black"
   context.lineCap = "round"
-  context.lineWidth = 1 //5
+  context.lineWidth = 5 //5
 
   canvas.onmousedown = function(e) {
     isDrawing = true
@@ -85,11 +85,11 @@ $(document).ready(function(){
   /* ----- MAIN PAGE ----- */
 
   $("#done").click(function() {
-    var possible = "A";
+    /* var possible = "A";
     var randomText = possible.charAt(Math.floor(Math.random() * possible.length));
     var element = $("<div></div>").text(randomText).hide();
     $(".elementList").append(element);
-    element.fadeIn();
+    element.fadeIn(); */
     $("#done").css("background-color", "black");
 
     $("#done").delay(1000).css("background-color", "lightgray");
@@ -123,40 +123,6 @@ $(document).ready(function(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const zerorpc = require("zerorpc")
 let client = new zerorpc.Client()
 
@@ -178,10 +144,6 @@ $("#done").click(function() {
   var imgArray = []
 
   for(var i=0; i<data.length; i+=4){
-    /*console.log(data[i])
-    console.log(data[i+1])
-    console.log(data[i+2])
-    console.log(data[1+3])*/
     var total = data[i] + data[i+1] + data[i+2] + data[i+3]
     imgArray[i/4] = total
   }
@@ -199,6 +161,10 @@ $("#done").click(function() {
   client.invoke("predict", imgArray, (error, res) => {
     console.log(error)
     console.log(res)
+
+    var element = $("<div></div>").text(res).hide()
+    $(".elementList").append(element)
+    element.fadeIn()
   })
 })
 

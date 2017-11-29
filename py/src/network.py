@@ -36,17 +36,12 @@ class Network(object):
         return("loaded network")
 
     def predict(self, x):
-        #return output a from input x
-
-        #pickle.dump(x, open("yo.p", "wb"))
-        #TODO: CHANGE THIS TO LENGHT OF FIRST LAYER
-        #turn x into a numpy array that we can use without getting grabage as result
-        x = np.array(x, dtype=float)
-        x.shape = (784, 1)
-        #x = pickle.load(open("py/src/oy.p", "rb"))
+        # return output a from input x
         for w, b in zip(self.weights, self.biases):
-            x = sigmoid(np.dot(w, x) + b)
-        return (x)
+            print(x.shape)
+            print(w.shape)
+            x = sigmoid(np.dot(w, x)+b)
+        return x
 
     def train(self, data, epochs, num_batches, learning_rate, test_data=None):
         #data is a tuple (input, output)
@@ -83,7 +78,6 @@ class Network(object):
 
 
     def update_mini_batch(self, batch, learning_rate):
-        #TODO understand wtf you're doing
         del_w = [np.zeros(w.shape) for w in self.weights]
         del_b = [np.zeros(b.shape) for b in self.biases]
 
@@ -134,7 +128,7 @@ class Network(object):
     def cost_derivative(self, output_activations, z):
         return (output_activations-z)
 
-#sigmoid functions
+# sigmoid functions
 def sigmoid(p):
     return 1.0/(1.0+np.exp(-p))
 

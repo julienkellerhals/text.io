@@ -56,9 +56,13 @@ class Api(object):
         if (self.net == None):
             return("Initialize the network first")
         else:
+            # turn x into a numpy array that we can use without getting grabage as result
+            x = np.array(x, dtype=float)
+            x.shape = (784, 1)
+
             x = self.net.predict(x)
             res = np.argmax(x)
-            #we can't return a numpy class so we need .item()
+            # we can't return a numpy class so we need .item()
             return(res.item())
 
 def parse_port():
