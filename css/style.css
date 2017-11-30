@@ -120,10 +120,11 @@ body {
 	background-color: white;
 	border: solid black 2px;
 	margin: 0 20px;
-	width: 28px;
-	height: 28px;
+	/*width: 28px;
+	height: 28px;*/
 }
 
 h1 {
 	padding: 0 20px;
 }
+

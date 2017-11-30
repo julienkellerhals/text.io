@@ -11,7 +11,15 @@ $(document).ready(function(){
 
   context.strokeStyle = "black"
   context.lineCap = "round"
-  context.lineWidth = 5 //5
+  context.lineWidth = 5
+
+
+    var c=document.getElementById("paintCanvas");
+    var ctx=c.getContext("2d");
+    var img=document.getElementById("imgur");
+    ctx.drawImage(img,0,0);
+
+//document.getElementById("imgur").innerHTML=imgData.data.toString();
 
   canvas.onmousedown = function(e) {
     isDrawing = true
@@ -48,9 +56,8 @@ $(document).ready(function(){
   }
 
   async function convertCanvasToImage() {
-    console.log("mongo convert")
+    console.log("913ea11c0b3f07bcd74db20c379f82cd6bbe4924f8c4f23c6826b48037d39365")
     var img = new Image()
-    //img.src = "js/mongo.jpg"
     img.src = canvas.toDataURL("image/png", 1.0)
     console.log(img)
   }
@@ -111,16 +118,6 @@ $(document).ready(function(){
     //$("#done").delay(10000000).css("background-color", "lightgray");
   });
 });
-
-
-
-
-
-
-
-
-
-
 
 
 const zerorpc = require("zerorpc")

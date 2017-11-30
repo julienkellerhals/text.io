@@ -20,7 +20,7 @@ class Network(object):
         net = np.array([[self.num_layers], [self.sizes], [self.weights], [self.biases]], dtype=object)
         net.dump(path)
         #pickle.dump(net, open(path, "wb"))
-        print("saved shit yo")
+        print("save network")
 
     def load(self, path="../../data/net.p"):
         #load the network from path
